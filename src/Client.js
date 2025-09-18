@@ -1036,7 +1036,16 @@ class Client extends EventEmitter {
         }
 
         const sentMsg = await this.pupPage.evaluate(async (chatId, content, options, sendSeen) => {
-            const chat = await window.WWebJS.getChat(chatId, { getAsModel: false });
+            let chat;
+            try {
+                // Try simple approach first
+                chat = await window.WWebJS.getChat(chatId, { getAsModel: false });
+            } catch (error) {
+                // If simple approach fails, resolve LID and try again
+                const { lid, phone } = await window.WWebJS.enforceLidAndPnRetrieval(chatId);
+                const targetId = lid?._serialized || phone?._serialized || chatId;
+                chat = await window.WWebJS.getChat(targetId, { getAsModel: false });
+            }
 
             if (!chat) return null;
 
