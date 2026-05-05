@@ -1537,7 +1537,7 @@ class Client extends EventEmitter {
                     chat = await window.WWebJS.getChat(chatId, {
                         getAsModel: false,
                     });
-                } catch (error) {
+                } catch (ignoredError) {
                     const { lid, phone } =
                         await window.WWebJS.enforceLidAndPnRetrieval(chatId);
                     const targetId =
